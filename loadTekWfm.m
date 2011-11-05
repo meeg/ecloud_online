@@ -1,4 +1,4 @@
-function [delta sigma time meta] = loadTekWfm(filename)
+function [delta time meta] = loadTekWfm(filename)
 % LOADTEKWFM Loads Tektronix raw waveform file
 %    [delta sigma time meta] = loadTekWfm(filename)
 %
@@ -14,11 +14,11 @@ function [delta sigma time meta] = loadTekWfm(filename)
 addpath('./procTekData/')
 
 % Check the number of outputs to make sure we're not losing data.
-if nargout < 2
+if nargout < 1
 	error('Not enough outputs!')
-elseif nargout == 2
+elseif nargout == 1
 	warning('loadTekWfm:outputsNotCaptured','Time & metadata output not captured')
-elseif nargout == 3
+elseif nargout == 2
 	warning('loadTekWfm:outputsNotCaptured','metadata output not captured. Are you really sure??')
 end
 
@@ -90,28 +90,26 @@ end
 
 %%% Load in the data to memory
 %
-try
+%try
 	delta_struct = wfmread(deltaName);
-	sigma_struct = wfmread(sigmaName);
-catch exception
-	error('loadTekWfm:badDataRead','we got a bad file read')
-end
+%	sigma_struct = wfmread(sigmaName);
+
+%catch exception
+%	error('loadTekWfm:badDataRead','we got a bad file read')
+%end
 
 % Extract basic metadata
-if delta_struct.points == sigma_struct.points && delta_struct.frames == sigma_struct.frames
-							  meta.nPoints = delta_struct.points;
-							 meta.nTurns = delta_struct.frames;
-else
-	error('loadTekWfm:deltaSigmaMismatch','Something in the Delta and sigma inputs doesn''t match')
-end
+meta.nPoints = delta_struct.points;
+meta.nTurns = delta_struct.frames;
 
 %%% Import the data to our standardized format
 
 % Get the main data channels, and convert them into real volts
 delta = delta_struct.v * delta_struct.waveheader.exp_dim_1_dim_scale ...
 	+ delta_struct.waveheader.exp_dim_1_dim_offset;
-sigma = sigma_struct.v * sigma_struct.waveheader.exp_dim_1_dim_scale ...
-	+ sigma_struct.waveheader.exp_dim_1_dim_offset;
+
+%sigma = sigma_struct.v * sigma_struct.waveheader.exp_dim_1_dim_scale ...
+%	+ sigma_struct.waveheader.exp_dim_1_dim_offset;
 
 % Timebases
 time = delta_struct.waveheader.imp_dim_1_dim_scale * (0:meta.nPoints-1) ...

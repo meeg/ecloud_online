@@ -144,13 +144,13 @@ elseif exist(dataTarget,'file')
 	else
 		% if none of the above conditions are true, then we can and should
 		% convert this file
-		try
+		%try
 			% Try to convert the data
 			convertData(dataTarget,outputName,version,preWindow,postWindow);
-		catch exception
+		%catch exception
 			% Catch known Errors, and log the message to stdout
-			handleError(exception);
-		end
+		%	handleError(exception);
+		%end
 	end
 else
 	% We've been handed something that is neither a file nor a directory,
@@ -171,21 +171,24 @@ tic
 [pathName, ~, ~] = fileparts(inputFile);
 
 % Display what we're trying to import
-fprintf('%s',inputFile)
+printf('Loading input file: %s\n',inputFile)
 
 % Import the Raw data
-fprintf(', loading')
-[deltaRaw sigmaRaw time meta] = loadEcloudData(inputFile);
+[deltaRaw time meta] = loadEcloudData(inputFile);
+
+printf('Done loading, %d seconds elapsed\n',toc);
 
 % Equalize Data
-fprintf(', EQing %0.1fbuc x %uturn',meta.nPoints*meta.sampleTime*1e9/25,meta.nTurns)
-[deltaPROC sigmaPROC] = equalizeSignal(deltaRaw,sigmaRaw,time,meta);
+printf('EQing %0.1fbuc x %uturn\n',meta.nPoints*meta.sampleTime*1e9/25,meta.nTurns)
+[delta] = equalizeSignal(deltaRaw,time,meta);
+
+printf('Done loading, %d seconds elapsed\n',toc);
 
 % Isolate bunches from equalized signal and longitudinally align them
-fprintf(', aligning')
-[delta,sigma,centroids,meta] = ...
-	turns2bunches(deltaPROC,sigmaPROC,time,meta,...
-	preWindow,postWindow);
+%fprintf(', aligning')
+%[delta,centroids,meta] = ...
+%	turns2bunches(deltaPROC,time,meta,...
+%	preWindow,postWindow);
 
 % Check if our destination folder exists
 if exist(strrep(pathName,'DataRaw','DataProcessed'),'dir')
@@ -199,21 +202,21 @@ else
 end
 
 % Convert data to lower precision for smaller data size
-delta = single(delta);
-sigma = single(sigma);
-centroids = single(centroids);
+%delta = single(delta);
+%centroids = single(centroids);
 
 % Load the folder metadata
 folderMetadataVersion = loadFolderMetadataVersion(inputFile);
 metadataVersion = folderMetadataVersion;
 
 % Save off Tensor to the data processed folder
-fprintf(', saving %ubun x %uturn x %gns',meta.nBunches,meta.nTurns,1e9*meta.sampleTime*meta.nSlices)
-save(outputFile,...
-	'version','metadataVersion','delta','sigma','centroids','meta')
+%fprintf(', saving %ubun x %uturn x %gns',meta.nBunches,meta.nTurns,1e9*meta.sampleTime*meta.nSlices)
+printf('Saving to %s\n',outputFile);
+%save(outputFile,'version','metadataVersion','delta','meta')
 
+printf('Done saving, %d seconds elapsed\n',toc);
 % Show we're done
-fprintf(', done in %0.0f:%04.1f\n',floor(toc/60),toc-60*floor(toc/60));
+fprintf('Done in %0.0f:%04.1f\n',floor(toc/60),toc-60*floor(toc/60));
 
 end
 
