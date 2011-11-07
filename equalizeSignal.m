@@ -1,4 +1,4 @@
-function [deltaPROC t] = equalizeSignal(delta,time,meta)
+function [deltaPROC] = equalizeSignal(delta,meta)
 % Recover_signal_new : Equalize (Deconvolution) the pick-up sigma using
 % the CABLE, PICK-UP and FILTER transfer function.
 

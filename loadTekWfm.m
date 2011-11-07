@@ -90,13 +90,12 @@ end
 
 %%% Load in the data to memory
 %
-%try
+try
 	delta_struct = wfmread(deltaName);
-%	sigma_struct = wfmread(sigmaName);
 
-%catch exception
-%	error('loadTekWfm:badDataRead','we got a bad file read')
-%end
+catch exception
+	error('loadTekWfm:badDataRead','we got a bad file read')
+end
 
 % Extract basic metadata
 meta.nPoints = delta_struct.points;
@@ -108,9 +107,6 @@ meta.nTurns = delta_struct.frames;
 delta = delta_struct.v * delta_struct.waveheader.exp_dim_1_dim_scale ...
 	+ delta_struct.waveheader.exp_dim_1_dim_offset;
 
-%sigma = sigma_struct.v * sigma_struct.waveheader.exp_dim_1_dim_scale ...
-%	+ sigma_struct.waveheader.exp_dim_1_dim_offset;
-
 % Timebases
 time = delta_struct.waveheader.imp_dim_1_dim_scale * (0:meta.nPoints-1) ...
 	+ delta_struct.waveheader.imp_dim_1_dim_offset;
@@ -120,8 +116,8 @@ meta.sampleTime = delta_struct.waveheader.imp_dim_1_dim_scale;
 % frame has these fields
 % real_point_offset - all zeros?
 % tt_offset - trigger error? in samples?
-% frac_sec - some sort of absoulte time?   \ _ do these to sum to absolute time?
-% gmt_sec - absolute time relative to GMT? /
+% gmt_sec - absolute time in GMT (Unix epoch), in seconds
+% frac_sec - fractional seconds (the remainder of the absolute time)
 frameStruct = cell2mat(squeeze(struct2cell(delta_struct.frame)));
 
 % Sampling errors
