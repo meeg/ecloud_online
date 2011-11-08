@@ -31,13 +31,13 @@ if exist(dataTarget,'file')
 	else
 		% if none of the above conditions are true, then we can and should
 		% convert this file
-		try
+		%try
 			% Try to convert the data
 			[delta time meta] = convertData(dataTarget,version);
-		catch exception
+		%catch exception
 			% Catch known Errors, and log the message to stdout
-			handleError(exception);
-		end
+		%	handleError(exception);
+		%end
 	end
 else
 	% We've been handed something that is neither a file nor a directory,

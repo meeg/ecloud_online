@@ -37,6 +37,7 @@ fileChannel = file(end-2:end);
 for i = 1:length(folderMetadata)
 	% Check against sigmaChannel
 	if strcmp(fileChannel,folderMetadata(i).sigmaChannel)
+		error('This is a sigma channel; use the delta channel for this function')
 		tekMetadata = folderMetadata(i);
 		break;
 	end
@@ -57,41 +58,13 @@ meta.attenuation.hybridCommon	= tekMetadata.attenuation.hybridCommon;
 meta.attenuation.sigma			= tekMetadata.attenuation.sigma;
 meta.attenuation.delta			= tekMetadata.attenuation.delta;
 
-
-% First, find the matching file for delta/sigma
-if ~isempty(findstr(filename,tekMetadata.deltaChannel))
-	% We have the delta channel as our target. however, we only want to
-	% start processing the sigma channels, by doing this, we reduce the
-	% number of errors thrown by bad processing jobs (we only get one, not
-	% two.
-	
-	% 	error('loadTekWfm:wrongChannelIn','Only SIGMA channel input is acceptable');
-	
-	% We have the sigma channel name in
-	sigmaName = strrep(filename,tekMetadata.deltaChannel,tekMetadata.sigmaChannel);
-	deltaName = filename;
-	
-	% Check we have the delta channel
-	if ~exist(sigmaName,'file')
-		error('loadTekWfm:noMatchingFile','Matching file does not exist')
-	end
-elseif  ~isempty(findstr(filename,tekMetadata.sigmaChannel))
-	% We have the sigma channel name in
-	sigmaName = filename;
-	deltaName = strrep(filename,tekMetadata.sigmaChannel,tekMetadata.deltaChannel);
-	
-	% Check we have the delta channel
-	if ~exist(deltaName,'file')
-		error('loadTekWfm:noMatchingFile','Matching file does not exist')
-	end
-else
-	error('loadTekWfm:unknownChannel','We don''t know what channel this is')
-end
+deltaName = filename;
 
 %%% Load in the data to memory
 %
 try
 	delta_struct = wfmread(deltaName);
+%	sigma_struct = wfmread(sigmaName);
 
 catch exception
 	error('loadTekWfm:badDataRead','we got a bad file read')
@@ -106,6 +79,9 @@ meta.nTurns = delta_struct.frames;
 % Get the main data channels, and convert them into real volts
 delta = delta_struct.v * delta_struct.waveheader.exp_dim_1_dim_scale ...
 	+ delta_struct.waveheader.exp_dim_1_dim_offset;
+
+%sigma = sigma_struct.v * sigma_struct.waveheader.exp_dim_1_dim_scale ...
+%	+ sigma_struct.waveheader.exp_dim_1_dim_offset;
 
 % Timebases
 time = delta_struct.waveheader.imp_dim_1_dim_scale * (0:meta.nPoints-1) ...
