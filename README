@@ -1,0 +1,7 @@
+Scripts for "online" analysis of e-cloud MD data. The idea is that data can be copied to a USB drive as it is taken; the data files will be automatically synced to a local directory, and some basic plots will be made, whenever the drive is connected.
+
+The online analysis is built around two scripts that are to be run continuously.
+
+One (either online_process.sh or copy_data.m - the former will only run on a Unix shell; the latter should be platform-independent but requires that it be run in parallel with the other Matlab script) watches for .wfm files in a "source" directory. If it sees any new files, these are copied to a local "temp" directory. Once the files are copied, the USB drive can be unmounted.
+
+The other is watch_data.m; this monitors the "temp" directory for new data. Delta channel data is filtered and equalized; spectrograms and waveforms are displayed and saved to PNG files in the "plots" directory. Once the analysis is done, the files are moved to the "data" directory.
