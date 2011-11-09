@@ -8,7 +8,7 @@ file = file';
 [~, name, ext] = fileparts(file);
 if strncmpi(ext,'.wfm',4)
 if !exist(strcat(local,file),'file') && !exist(strcat(temp,file),'file')
-printf('Copying %s\n',strcat(source,file));
+fprintf('Copying %s\n',strcat(source,file));
 copyfile(strcat(source,file),temp)
 end
 end

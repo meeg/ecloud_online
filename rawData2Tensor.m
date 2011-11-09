@@ -58,18 +58,18 @@ tic
 [pathName, ~, ~] = fileparts(inputFile);
 
 % Display what we're trying to import
-printf('Loading input file: %s\n',inputFile)
+fprintf('Loading input file: %s\n',inputFile)
 
 % Import the Raw data
 [deltaRaw time meta] = loadTekWfm(inputFile);
 
-printf('Done loading, %.2f seconds elapsed\n',toc);
+fprintf('Done loading, %.2f seconds elapsed\n',toc);
 
 % Equalize Data
-printf('EQing %dpts x %uturn\n',meta.nPoints,meta.nTurns)
+fprintf('EQing %dpts x %uturn\n',meta.nPoints,meta.nTurns)
 [delta] = equalizeSignal(deltaRaw,meta);
 
-printf('Done equalizing, %.2f seconds elapsed\n',toc);
+fprintf('Done equalizing, %.2f seconds elapsed\n',toc);
 
 % Show we're done
 fprintf('Done in %0.0f:%04.1f\n',floor(toc/60),toc-60*floor(toc/60));

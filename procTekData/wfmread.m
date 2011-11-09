@@ -22,7 +22,9 @@ function x = wfmread(fn)
   x.frames=x.staticheader.n_number_of_fastframes_minus_one+1;
   [x.frame, x.curve]= mkframes(fid,x.frames);
   x.points=x.curve(1).end_of_curve_buffer_offset;
+fprintf('Done reading headers\n');
   x.v=fread(fid,[x.points,x.frames],'schar')';
+fprintf('Done reading data\n');
   fclose(fid);
 end
 
