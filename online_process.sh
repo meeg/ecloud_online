@@ -1,19 +1,25 @@
 #!/bin/bash
-#octave 
-datadir="/media/ADATA/"
-tempdir="/home/meeg/matlab_online/temp/"
-localdir="/home/meeg/matlab_online/data/"
+if [ $1 ]
+then
+	echo "Watching $1 for new data"
+else
+	echo "Specify a directory to watch"
+	exit
+fi
+
+tempdir="temp/"
+localdir="data/"
 while true
 do
-for i in `ls $datadir*.wfm 2>/dev/null`
-do
-filename=`basename "$i"`
-if [[ (! -f "$localdir$filename") && (! -f "$tempdir$filename")  ]]
-then
-echo "copying $filename"
-cp "$datadir$filename" "$tempdir$filename"
-fi
-done
-echo "Done copying"
-sleep 1
+	for i in `ls $1/*.wfm 2>/dev/null`
+	do
+		filename=`basename "$i"`
+		if [[ (! -f "$localdir$filename") && (! -f "$tempdir$filename")  ]]
+		then
+			echo "copying $filename"
+			cp "$1/$filename" "$tempdir$filename"
+		fi
+	done
+	echo "Done copying"
+	sleep 1
 done

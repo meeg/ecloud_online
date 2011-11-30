@@ -1,6 +1,6 @@
-temp = '/home/meeg/matlab_online/temp/';
-local = '/home/meeg/matlab_online/data/';
-plots = '/home/meeg/matlab_online/plots/';
+temp = 'temp/';
+local = 'data/';
+plots = 'plots/';
 while true
     listing = dir(temp);
     files = listing.name;
@@ -10,7 +10,7 @@ while true
 %        disp(file)
     %Make the filename into a column vector like Matlab expects
 %fprintf('%s\n',file)
-[~, name, ext] = fileparts(file);
+[dummy, name, ext] = fileparts(file);
 %fprintf('%s\n',ext)
 if strncmpi(ext,'.wfm',4)
 if strcmp(name(end-2:end),'Ch2')

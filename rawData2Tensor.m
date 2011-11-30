@@ -23,7 +23,7 @@ if exist(dataTarget,'file')
 	% convert it.
 	
 	% Grab the fileparts should we need them
-	[~, ~, extName] = fileparts(dataTarget);
+	[dummy, dummy, extName] = fileparts(dataTarget);
 	
 	% See what to do with this file
 	if ~strcmpi(extName,'.wfm')
@@ -55,7 +55,7 @@ function [delta time meta] = convertData(inputFile,version)
 tic
 
 % Grab the fileparts should we need them
-[pathName, ~, ~] = fileparts(inputFile);
+[pathName, dummy, dummy] = fileparts(inputFile);
 
 % Display what we're trying to import
 fprintf('Loading input file: %s\n',inputFile)
